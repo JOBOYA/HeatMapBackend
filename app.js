@@ -1,5 +1,5 @@
 const express = require('express');
-const postgres = require('postgres');
+const { Pool } = require('pg');
 const cors = require('cors');
 
 require('dotenv').config();
@@ -12,7 +12,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-const sql = postgres({
+const sql = new Pool({
     host: PGHOST,
     database: PGDATABASE,
     username: PGUSER,
