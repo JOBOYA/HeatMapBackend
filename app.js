@@ -7,9 +7,13 @@ let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors({
-    origin: 'https://dreamy-kitten-353dc9.netlify.app'
-}));
+const corsOptions = {
+  origin: ['https://main--dreamy-kitten-353dc9.netlify.app', 'https://dreamy-kitten-353dc9.netlify.app'],
+  optionsSuccessStatus: 200  
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 const sql = new Pool({
