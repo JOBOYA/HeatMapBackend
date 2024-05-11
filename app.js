@@ -66,25 +66,25 @@ const sql = new Pool({
 });
 
 
-  app.post('/events', async (req, res) => {
-    const { date, title, description } = req.body;
+app.post('/events', async (req, res) => {
+  const { date, title, description } = req.body;
 
-    if (!date || !title || !description) {
-        return res.status(400).json({ error: 'Missing required properties' });
-    }
+  if (!date || !title || !description) {
+      return res.status(400).json({ error: 'Missing required properties' });
+  }
 
-    try {
-        const result = await sql`
-            INSERT INTO savedate (date, title, description)
-            VALUES (${date}, ${title}, ${description})
-            RETURNING *; -- Retourne l'élément inséré
-        `;
-        res.status(201).json(result);
-    } catch (error) {
-        console.error('Error inserting event:', error);
-        res.status(500).json({ error: 'Failed to insert event', details: error.message });
-    }
+  try {
+      const result = await sql.query(`
+          INSERT INTO savedate (date, title, description)
+          VALUES ($1, $2, $3)
+          RETURNING *;`, [date, title, description]);  // Utilisation de paramétrage pour éviter les injections SQL
+      res.status(201).json(result.rows[0]);
+  } catch (error) {
+      console.error('Error inserting event:', error);
+      res.status(500).json({ error: 'Failed to insert event', details: error.message });
+  }
 });
+
 
 
 
