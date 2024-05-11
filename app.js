@@ -55,15 +55,14 @@ const sql = new Pool({
 
   app.get('/events', async (req, res) => {
     try {
-        const events = await sql`
-            SELECT * FROM savedate;  
-        `;
-        res.json(events);
+        const events = await sql.query(`SELECT * FROM savedate;`);
+        res.json(events.rows);
     } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).json({ error: 'Failed to fetch events', details: error.message });
     }
 });
+
 
 
 app.post('/events', async (req, res) => {
