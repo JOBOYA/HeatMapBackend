@@ -15,7 +15,7 @@ const resend2 = new Resend('re_vZfR9SCW_HDNEo88pBSQSQQrt6Akq7Vuz');
 
 // Configuration des options CORS
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://dreamy-kitten-353dc9.netlify.app',
   optionsSuccessStatus: 200  
 };
 
