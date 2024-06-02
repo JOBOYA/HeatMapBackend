@@ -75,7 +75,7 @@ app.delete('/events/:id', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'DELETE FROM savedate WHERE id = $1 RETURNING *;',
+      'DELETE FROM savedate WHERE id = $1 RETURNING title;',
       [parseInt(id, 10)]
     );
 
@@ -83,13 +83,14 @@ app.delete('/events/:id', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    res.json(result.rows[0]);
+    const deletedEvent = result.rows[0];
+    res.json(deletedEvent);
 
     // Envoi d'un email de confirmation de suppression
     await sendEmails(
       ['lena.boya26@gmail.com', 'camille.mar@live.fr'],
-      'Event Deleted',
-      `<strong>The event with ID ${id} has been deleted.</strong>`
+      'Evènement supprimé',
+      `<strong>The event titled "${deletedEvent.title}" has been deleted.</strong>`
     );
 
   } catch (error) {
@@ -97,6 +98,7 @@ app.delete('/events/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete event', details: error.message });
   }
 });
+
 
 // Gestionnaire pour obtenir tous les événements
 app.get('/events', async (req, res) => {
@@ -137,8 +139,8 @@ app.post('/events', async (req, res) => {
       setTimeout(() => {
         sendEmails(
           ['lena.boya26@gmail.com', 'camille.mar@live.fr'],
-          `Reminder: ${title}`,
-          `<strong>Event Reminder:</strong><br>Date: ${date} ${time}<br>Title: ${title}`
+          `Rappel: ${title}`,
+          `<strong>EVENEMENT:</strong><br>Date: ${date} ${time}<br>Titre: ${title}`
         );
       }, timeUntilReminder);
     }
@@ -160,8 +162,8 @@ app.post('/send-alert', async (req, res) => {
   try {
     await sendEmails(
       [email],
-      `Reminder: ${event.title}`,
-      `<strong>Event Reminder:</strong><br>Date: ${event.date} ${event.heure}<br>Title: ${event.title}`
+      `Rappel: ${event.title}`,
+      `<strong>Rappel de l'évenement:</strong><br>Date: ${event.date} ${event.heure}<br>Titre: ${event.title}`
     );
     res.status(200).json({ message: 'Alert sent successfully' });
   } catch (error) {
