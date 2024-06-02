@@ -1,4 +1,3 @@
-// Importation des modules nécessaires
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -75,7 +74,7 @@ app.delete('/events/:id', async (req, res) => {
 
   try {
     const result = await pool.query(
-      'DELETE FROM savedate WHERE id = $1 RETURNING title;',
+      'DELETE FROM savedate WHERE id = $1 RETURNING *;',
       [parseInt(id, 10)]
     );
 
@@ -83,14 +82,13 @@ app.delete('/events/:id', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    const deletedEvent = result.rows[0];
-    res.json(deletedEvent);
+    res.json(result.rows[0]);
 
     // Envoi d'un email de confirmation de suppression
     await sendEmails(
       ['lena.boya26@gmail.com', 'camille.mar@live.fr'],
       'Evènement supprimé',
-      `<strong>The event titled "${deletedEvent.title}" has been deleted.</strong>`
+      `<strong>The event with ID ${id} has been deleted.</strong>`
     );
 
   } catch (error) {
@@ -98,7 +96,6 @@ app.delete('/events/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete event', details: error.message });
   }
 });
-
 
 // Gestionnaire pour obtenir tous les événements
 app.get('/events', async (req, res) => {
