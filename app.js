@@ -13,9 +13,20 @@ const resend1 = new Resend('re_L8JyigER_4mj7zrBjx2spsZCTLuZsqyLx');
 const resend2 = new Resend('re_vZfR9SCW_HDNEo88pBSQSQQrt6Akq7Vuz');
 
 // Configuration des options CORS
+const allowedOrigins = [
+  'https://dreamy-kitten-353dc9.netlify.app',
+  'https://main--dreamy-kitten-353dc9.netlify.app'
+];
+
 const corsOptions = {
-  origin: 'https://main--dreamy-kitten-353dc9.netlify.app',
-  optionsSuccessStatus: 200  
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
